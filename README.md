@@ -1,58 +1,245 @@
-## Project: Build a Traffic Sign Recognition Program
-[![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
+# **Traffic Sign Recognition** 
 
-Overview
+## Writeup
+
+
 ---
-In this project, you will use what you've learned about deep neural networks and convolutional neural networks to classify traffic signs. You will train and validate a model so it can classify traffic sign images using the [German Traffic Sign Dataset](http://benchmark.ini.rub.de/?section=gtsrb&subsection=dataset). After the model is trained, you will then try out your model on images of German traffic signs that you find on the web.
 
-We have included an Ipython notebook that contains further instructions 
-and starter code. Be sure to download the [Ipython notebook](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/Traffic_Sign_Classifier.ipynb). 
+**Build a Traffic Sign Recognition Project**
 
-We also want you to create a detailed writeup of the project. Check out the [writeup template](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/writeup_template.md) for this project and use it as a starting point for creating your own writeup. The writeup can be either a markdown file or a pdf document.
-
-To meet specifications, the project will require submitting three files: 
-* the Ipython notebook with the code
-* the code exported as an html file
-* a writeup report either as a markdown or pdf file 
-
-Creating a Great Writeup
----
-A great writeup should include the [rubric points](https://review.udacity.com/#!/rubrics/481/view) as well as your description of how you addressed each point.  You should include a detailed description of the code used in each step (with line-number references and code snippets where necessary), and links to other supporting documents or external references.  You should include images in your writeup to demonstrate how your code works with examples.  
-
-All that said, please be concise!  We're not looking for you to write a book here, just a brief description of how you passed each rubric point, and references to the relevant code :). 
-
-You're not required to use markdown for your writeup.  If you use another method please just submit a pdf of your writeup.
-
-The Project
----
 The goals / steps of this project are the following:
-* Load the data set
+
+* Load the data set (see below for links to the project data set)
 * Explore, summarize and visualize the data set
 * Design, train and test a model architecture
 * Use the model to make predictions on new images
 * Analyze the softmax probabilities of the new images
 * Summarize the results with a written report
 
-### Dependencies
-This lab requires:
 
-* [CarND Term1 Starter Kit](https://github.com/udacity/CarND-Term1-Starter-Kit)
+[//]: # (Image References)
 
-The lab environment can be created with CarND Term1 Starter Kit. Click [here](https://github.com/udacity/CarND-Term1-Starter-Kit/blob/master/README.md) for the details.
+[image1]: ./examples/explore_data.png "Visualization"
+[image2]: ./examples/training_data_distribution.png "Training data"
+[image3]: ./examples/validation_data_distribution.png "Validation data"
+[image4]: ./examples/test_data_distribution.png "Test data"
+[image5]: ./examples/augmented_training_data_distribution.png "Augmented Training data distribution"
+[image6]: ./examples/Augmented_image.png "Augmented Image"
+[image7]: ./examples/1.png "Traffic Sign 1"
+[image8]: ./examples/2.png "Traffic Sign 2"
+[image9]: ./examples/3.png "Traffic Sign 3"
+[image10]: ./examples/4.png "Traffic Sign 4"
+[image11]: ./examples/5.png "Traffic Sign 5"
+[image12]: ./examples/soft_max.png "Top 5 Softmax"
+[image13]: ./examples/gray_scaled.png "Gray scaled"
 
-### Dataset and Repository
+## Rubric Points
+### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
 
-1. Download the data set. The classroom has a link to the data set in the "Project Instructions" content. This is a pickled dataset in which we've already resized the images to 32x32. It contains a training, validation and test set.
-2. Clone the project, which contains the Ipython notebook and the writeup template.
-```sh
-git clone https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project
-cd CarND-Traffic-Sign-Classifier-Project
-jupyter notebook Traffic_Sign_Classifier.ipynb
+---
+### Writeup / README
+
+#### 1. Provide a Writeup / README that includes all the rubric points and how you addressed each one. You can submit your writeup as markdown or pdf. You can use this template as a guide for writing the report. The submission includes the project code.
+
+You're reading it!
+
+### Data Set Summary & Exploration
+
+#### 1. Provide a basic summary of the data set. In the code, the analysis should be done using python, numpy and/or pandas methods rather than hardcoding results manually.
+
+I used the numpy library to display summary statistics of the traffic
+signs data set:
+
+* The size of training set is 34799
+* The size of the validation set is 4410
+* The size of test set is 12630
+* The shape of a traffic sign image is 32x32x3
+* The number of unique classes/labels in the data set is 43
+
+#### 2. Include an exploratory visualization of the dataset.
+
+Here is an exploratory visualization of the data set. Below is a 
+set of 12 randomly selected images from training set.
+
+![alt text][image1]
+
+### Design and Test a Model Architecture
+
+#### 1. Describe how you preprocessed the image data. What techniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, and provide example images of the additional data. Then describe the characteristics of the augmented training set like number of images in the set, number of images for each class, etc.)
+
+As a first step, I decided to convert the images to grayscale because I believe this helps to reduce the training time significantly.
+
+```python
+X_train_gray = np.sum(X_train/3, axis=3, keepdims=True)
+X_valid_gray = np.sum(X_valid/3, axis=3, keepdims=True)
+X_test_gray  = np.sum(X_test/3, axis=3, keepdims=True)
 ```
 
-### Requirements for Submission
-Follow the instructions in the `Traffic_Sign_Classifier.ipynb` notebook and write the project report using the writeup template as a guide, `writeup_template.md`. Submit the project code and writeup document.
+Here is an example of a traffic sign image before and after grayscaling.
 
-## How to write a README
-A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
+![alt text][image13]
+
+As a last step, I normalized the image data because it was suggested in the class lessons. Having a wider distribution of training data would make the 
+learning difficult. 
+
+I used the simple method described in the project instructions. This will 
+reduce the distribution of pixel data from 0-255 to -1 to +1.
+
+Following snippet of code does the normalization.
+
+```python
+X_training_normalized = (X_train - 128)/128
+X_valid_normalized    = (X_valid - 128)/128
+X_test_normalized     = (X_test  - 128)/128
+```
+
+There are 43 classes of data. I have plotted the distribution of 
+training, validation and test data sets below.
+
+![alt text][image2]
+
+![alt text][image3]
+
+![alt text][image4]
+
+As you can see from the training data distribution, there 
+are fewer training data set for certain classes of labels than 
+others. I believe this can create bias in learning process. To overcome
+this limitation, I have decided to generate fake data as suggested
+in the project instructions. 
+
+If the number of training samples for a particular class is less 
+than 1000, fake data is generated by applying one of the 
+following image transforms on a given sample image and added to 
+training data samples.
+
+  * Rotate by a random angle of -15 to +15 degrees (`rotate_image()`).
+  * Scale the image (`scale_image()`)
+  * Translate the image by +/-2 pixels (`translate_image()`)
+
+This step ensures that there are atleast 1000 training samples for each class.
+This was a very time consuming to run and generate the fake images.
+
+Following is the training data distribution after augmenting the traing set
+with fake data.
+
+![alt text][image5]
+
+Here is an example of an original image and an augmented image:
+
+![alt text][image6]
+
+No fake data generated for Validation and test data sets.
+
+#### 2. Describe what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
+
+My final model is implemented in function `LeNet()`. I started this model based on the model we implemented in the lesson.
+
+My final model consisted of the following layers:
+
+| Layer         		|     Description	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| Input         		| 32x32x1 Gray scale image 						| 
+| Convolution 5x5    	| 1x1 stride, valid padding, outputs 28x28x6 	|
+| RELU					|												|
+| Dropout               |                                               |
+| Max pooling	      	| 2x2 stride,  outputs 14x14x6   				|
+| Convolution 5x5	    | 1x1 stride, valid padding, outputs 10x10x16	|
+| RELU                  |                                               |
+| Max pooling           | 2x2 stride,  outputs 5x5x16                   |
+| Flatten               | output 5x5x1 = 400                            |
+| Fully connected		| input=400, output=120                         |
+| RELU                  |                                               |
+| Dropout               | Keep Probability 65%                          |
+| Fully connected       | input=120, output=84                          |
+| RELU                  |                                               |
+| Dropout               | Keep Probability 65%                          |
+| Fully connected       | input=84, output=43                           |
+|						|												|
+ 
+
+
+#### 3. Describe how you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
+
+I started the model implementation based on the `LeNet` model we implemented in the lesson. I added dropout layers at the end of the first two fully connected layers.
+
+I used a learning rate of 0.0009, batch size of 128 and EPOCH of 20. I used a EPOCH of 10 initially, then found that it helps to improve the accuracy with increased EPOCHs, but it quickly diminishes after a certain point. I found EPOCH=20 is optimal for this model. 
+
+I used AdamOptimizer from TensorFlow as the Optimier.
+
+With this model and hyperparameters, I was able to achieve validation set accuracy of about 94% and test set accuracy of 92.7%.
+
+#### 4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
+
+My final model results were:
+
+* training set accuracy of 99.3%
+* validation set accuracy of 94.2%
+* test set accuracy of 92.7%
+
+The above metrics where calculated by following code snippets.
+
+```python
+saver = tf.train.Saver()
+
+with tf.Session() as sess:
+    saver.restore(sess, "./lenet2")
+    
+    training_accuracy = evaluate(X_train, y_train)
+    validate_accuracy = evaluate(X_valid, y_valid)
+    test_accuracy = evaluate(X_test, y_test)
+    print("Training Set Accuracy = {:.3f}".format(training_accuracy))
+    print("Validation Set Accuracy = {:.3f}".format(validate_accuracy))
+    print("Test Set Accuracy = {:.3f}".format(test_accuracy))
+```
+
+I started with the default training data set and `LeNet()` implenetation in the Udacity lesson. With this model, I was getting a validation set accuracy of about 89%.
+
+First thing I did was to augment the training data such that all the Traffic Sign classes have atleast 1000 samples. I observed that the training set accuracy was converging to 100 pretty quickly but the validation set accuracy wasn't improving. This indicated some kind of "over fitting" of the data. Next thing I did was to add dropout and it helped to reduce the over fitting. I then played around with the learning rate and arrived at a rate of 0.0009.
+
+I also tried to implement the model based on the architecture described in paper [Traffic Sign Recognition with Multi-Scale Convolutional Networks
+](http://yann.lecun.com/exdb/publis/pdf/sermanet-ijcnn-11.pdf). This is implemented in function `LeNetPlus()`. However, for some reason, I was not able to improve the accuracy of validation set. The architecture suggested in the paper should produce much higher accuracy. I ran out of time and couldn't debug the `LeNetPlus()` implementation. So I decided to switch back to `LeNet()` implementation.
+
+Final hyper parameter selection:
+
+* Batch Size = 128
+* EPOCH = 20
+* Learning Rate : 0.0009
+* Dropout Keep probability : 65%
+
+### Test a Model on New Images
+
+#### 1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
+
+Here are five German traffic signs that I found on the web:
+
+![alt text][image7] ![alt text][image8] ![alt text][image9] 
+![alt text][image10] ![alt text][image11]
+
+I believe the traffic sign images I got from the web was very clear and probably not very challenging. 
+
+#### 2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
+
+Here are the results of the prediction:
+
+| Image			        |     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| Road work      		| Road work   									| 
+| 60 Km/h     			| 60 Km/h 										|
+| 30 Km/h				| 30 Km/h										|
+| Vehicles over 3.5 metric tons prohibited| Vehicles over 3.5 metric tons prohibited |
+| Turn left ahead			| Turn left ahead   						|
+
+
+The model was able to correctly guess 5 out of 5 traffic signs, which gives an accuracy of 100%. 
+
+#### 3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
+
+I have implemented code that prints top five softmax probablities. Following is a visualization of top five softmax probablitites predicted for 5 traffic sign images downloaded from web.
+
+![alt text][image12]
+
+### (Optional) Visualizing the Neural Network (See Step 4 of the Ipython notebook for more details)
+#### 1. Discuss the visual output of your trained network's feature maps. What characteristics did the neural network use to make classifications?
+
 
